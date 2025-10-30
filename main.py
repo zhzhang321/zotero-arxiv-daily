@@ -130,7 +130,19 @@ if __name__ == '__main__':
         default="https://api.openai.com/v1",
     )
     add_argument(
+        "--openai_api_embedding",
+        type=str,
+        help="OpenAI API base URL",
+        default="https://api.openai.com/v1",
+    )
+    add_argument(
         "--model_name",
+        type=str,
+        help="LLM Model Name",
+        default="gpt-4o",
+    )
+    add_argument(
+        "--embedding_model_name",
         type=str,
         help="LLM Model Name",
         default="gpt-4o",
@@ -140,6 +152,12 @@ if __name__ == '__main__':
         type=str,
         help="Language of TLDR",
         default="English",
+    )
+    add_argument(
+        '--similarity_threshold',
+        type=float,
+        help='Similarity threshold for reranking',
+        default=0
     )
     parser.add_argument('--debug', action='store_true', help='Debug mode')
     args = parser.parse_args()
@@ -169,12 +187,17 @@ if __name__ == '__main__':
           exit(0)
     else:
         logger.info("Reranking papers...")
-        papers = rerank_paper(papers, corpus)
-        print(papers.score)
-        papers = papers[papers.score>7.6]
-        print(papers.score)
-        if args.max_paper_num != -1:
+        papers = rerank_paper(papers, corpus, args.openai_api_key, args.openai_api_embedding, args.embedding_model_name)
+        if args.max_paper_num != -1 or args.similarity_threshold == 0:
             papers = papers[:args.max_paper_num]
+        elif args.similarity_threshold != 0:
+            threshold = args.similarity_threshold * papers[0].score
+            target_papers = []
+            for i in range(0, len(papers), 5):
+                target_papers += papers[i:i+5]
+                if target_papers[-1].score < threshold:
+                    break
+            papers = target_papers
         if args.use_llm_api:
             logger.info("Using OpenAI API as global LLM.")
             set_global_llm(api_key=args.openai_api_key, base_url=args.openai_api_base, model=args.model_name, lang=args.language)

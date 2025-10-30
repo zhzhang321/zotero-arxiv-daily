@@ -201,6 +201,39 @@ class ArxivPaper:
         return tldr
 
     @cached_property
+    def detail(self) -> str:
+        if self.tex is not None:
+            content = self.tex.get("all")
+            if content is None:
+                content = "\n".join(self.tex.values())
+        else:
+            content = ''
+        llm = get_llm()
+        messages = [{
+            "role": "system",
+            "content": "根据下面的论文，回答对应的问题。你不需要刻意维持篇幅长度，不要因为顾虑篇幅而省略掉有价值的内容。请不要使用markdown格式和tex格式等，如需详细描述，可使用html格式",
+        },
+        {
+            "role": "user",
+            "content": f'''
+            \\title{{self.title}}
+            \\begin{{abstract}}{self.summary}\\end{{abstract}}
+            {content}'''
+        }
+        ]
+        questions = [
+            "这篇论文试图解决什么问题？",
+            "有哪些相关研究？",
+            "论文如何解决这个问题？",
+            "论文做了哪些实验？",
+            "有什么可以进一步探索的点？",
+            "总结一下论文的主要内容"
+        ]
+        for q in questions:
+            messages.append({"role": "user", "content": q})
+            messages.append({"role": "assistant", "content": llm.generate(messages=messages)})
+        return messages
+    @cached_property
     def affiliations(self) -> Optional[list[str]]:
         if self.tex is not None:
             content = self.tex.get("all")
