@@ -35,5 +35,8 @@ jobs:
           OPENAI_API_BASE: ${{ secrets.OPENAI_API_BASE }}
           MODEL_NAME: ${{ secrets.MODEL_NAME }}
           LANGUAGE: ${{ vars.LANGUAGE }}
+          EMBEDDING_MODEL_NAME: ${{ secrets.EMBEDDING_MODEL_NAME }}
+          OPENAI_API_EMBEDDING: ${{ secrets.OPENAI_API_EMBEDDING }}
+          SIMILARITY_THRESHOLD: ${{ vars.SIMILARITY_THRESHOLD }}
         run: |
           uv run main.py --debug

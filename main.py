@@ -132,7 +132,7 @@ if __name__ == '__main__':
     add_argument(
         "--openai_api_embedding",
         type=str,
-        help="OpenAI API base URL",
+        help="OpenAI API embedding URL",
         default="https://api.openai.com/v1",
     )
     add_argument(
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     add_argument(
         "--embedding_model_name",
         type=str,
-        help="LLM Model Name",
+        help="embedding Model Name",
         default="gpt-4o",
     )
     add_argument(
