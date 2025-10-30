@@ -211,7 +211,7 @@ class ArxivPaper:
         llm = get_llm()
         messages = [{
             "role": "system",
-            "content": "根据下面的论文，回答对应的问题。你不需要刻意维持篇幅长度，不要因为顾虑篇幅而省略掉有价值的内容。请不要使用markdown格式和tex格式等，如需详细描述，可使用html格式",
+            "content": "根据下面的论文，回答对应的问题。你不需要刻意维持篇幅长度，不要因为顾虑篇幅而省略掉有价值的内容。",
         },
         {
             "role": "user",

@@ -8,6 +8,7 @@ import smtplib
 import datetime
 import time
 from loguru import logger
+import mistune
 
 framework = """
 <!DOCTYPE HTML>
@@ -140,6 +141,7 @@ def get_stars(score:float, high: float):
 
 def render_email(papers:list[ArxivPaper]):
     parts = []
+    markdown = mistune.create_markdown()
     if len(papers) == 0 :
         return framework.replace('__CONTENT__', get_empty_html())
     
@@ -159,7 +161,14 @@ def render_email(papers:list[ArxivPaper]):
                 affiliations += ', ...'
         else:
             affiliations = 'Unknown Affiliation'
-        parts.append(get_block_html(p.title, authors,rate,p.arxiv_id ,p.tldr, p.pdf_url, p.detail[3]['content'], p.detail[5]['content'], p.detail[7]['content'], p.detail[9]['content'], p.detail[11]['content'], p.detail[13]['content'], p.code_url, affiliations,))
+        parts.append(get_block_html(p.title, authors,rate,p.arxiv_id ,p.tldr, p.pdf_url,
+                                    markdown(p.detail[3]['content']),
+                                    markdown(p.detail[5]['content']),
+                                    markdown(p.detail[7]['content']),
+                                    markdown(p.detail[9]['content']),
+                                    markdown(p.detail[11]['content']),
+                                    markdown(p.detail[13]['content']),
+                                    p.code_url, affiliations,))
         time.sleep(10)
 
     content = '<br>' + '</br><br>'.join(parts) + '</br>'
