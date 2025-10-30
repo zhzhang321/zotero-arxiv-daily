@@ -8,7 +8,7 @@ import smtplib
 import datetime
 import time
 from loguru import logger
-import mistune
+from markdown import markdown
 
 framework = """
 <!DOCTYPE HTML>
@@ -141,7 +141,6 @@ def get_stars(score:float, high: float):
 
 def render_email(papers:list[ArxivPaper]):
     parts = []
-    markdown = mistune.create_markdown()
     if len(papers) == 0 :
         return framework.replace('__CONTENT__', get_empty_html())
     
