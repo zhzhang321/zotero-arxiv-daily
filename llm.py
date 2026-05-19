@@ -25,7 +25,8 @@ class LLM:
             max_retries = 3
             for attempt in range(max_retries):
                 try:
-                    response = self.llm.chat.completions.create(messages=messages, temperature=0, model=self.model)
+                    response = self.llm.chat.completions.create(messages=messages, temperature=0, model=self.model,
+                                                               extra_body={"enable_thinking": True},)
                     break
                 except Exception as e:
                     logger.error(f"Attempt {attempt + 1} failed: {e}")
