@@ -84,7 +84,7 @@ class ArxivPaper:
                 file = self._paper.download_source(dirpath=tmpdirname)
             except HTTPError as e:
                 # 捕获 HTTP 错误
-                if e.code == 404:
+                if e.code == 404 or e.code == 503:
                     # 如果是 404 Not Found，说明源文件不存在，这是正常情况
                     logger.warning(f"Source for {self.arxiv_id} not found (404). Skipping source analysis.")
                     return None # 直接返回 None，后续依赖 tex 的代码会安全地处理
